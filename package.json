@@ -17,8 +17,7 @@
     "build-storybook": "storybook build",
     "type-check": "tsc --noEmit",
     "analyze": "ANALYZE=true next build",
-    "prepare": "husky install",
-    "postinstall": "prisma generate"
+    "prepare": "husky install"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
@@ -58,7 +57,7 @@
     "js-cookie": "^3.0.5",
     "libsodium-wrappers": "^0.7.13",
     "lucide-react": "^0.303.0",
-    "next": "14.0.4",
+    "next": "14.2.25",
     "next-themes": "^0.2.1",
     "nextjs-toploader": "^1.6.2",
     "pusher-js": "^8.4.0-rc2",
