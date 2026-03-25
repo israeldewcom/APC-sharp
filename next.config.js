@@ -3,8 +3,6 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
-const { withSentryConfig } = require('@sentry/nextjs');
-
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
@@ -16,7 +14,6 @@ const nextConfig = {
     minimumCacheTTL: 60,
   },
   experimental: {
-    appDir: true,
     optimizeCss: true,
     scrollRestoration: true,
   },
@@ -68,15 +65,4 @@ const nextConfig = {
   },
 };
 
-// Apply Sentry configuration
-const sentryWebpackPluginOptions = {
-  // Additional config options for the Sentry Webpack plugin
-  silent: true, // Suppresses all logs
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-};
-
-module.exports = withBundleAnalyzer(
-  withSentryConfig(nextConfig, sentryWebpackPluginOptions)
-);
+module.exports = withBundleAnalyzer(nextConfig);
