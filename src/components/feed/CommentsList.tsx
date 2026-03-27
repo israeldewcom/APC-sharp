@@ -10,7 +10,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 export function CommentsList({ postId }: { postId: string }) {
   const { data: comments, isLoading } = useQuery({
     queryKey: ['comments', postId],
-    queryFn: () => api.get(`/posts/${postId}/comments/`).then((res) => res.data),
+    queryFn: async () => {
+      const response = await api.get(`/posts/${postId}/comments/`);
+      return response.data;
+    },
   });
 
   if (isLoading) {
