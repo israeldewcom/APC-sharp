@@ -47,6 +47,7 @@
     "@tanstack/react-query-devtools": "^5.12.2",
     "axios": "^1.6.2",
     "clsx": "^2.0.0",
+    "sonner": "^1.5.0"
     "date-fns": "^2.30.0",
     "dexie": "^3.2.4",
     "dompurify": "^3.0.6",
