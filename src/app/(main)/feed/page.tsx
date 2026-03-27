@@ -20,10 +20,13 @@ export default function FeedPage() {
   const { ref, inView } = useInView();
   const [showCreatePost, setShowCreatePost] = useState(false);
 
-  // Fetch stories
+  // Fetch stories – using async/await to avoid implicit any
   const { data: stories } = useQuery({
     queryKey: ['stories'],
-    queryFn: () => api.get('/stories/').then((res) => res.data),
+    queryFn: async () => {
+      const response = await api.get('/stories/');
+      return response.data;
+    },
   });
 
   // Infinite feed query (React Query v5 syntax)
