@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus } from 'lucide-react';
@@ -19,15 +19,6 @@ export default function FeedPage() {
   const { user } = useAuthStore();
   const { ref, inView } = useInView();
   const [showCreatePost, setShowCreatePost] = useState(false);
-
-  // Fetch stories – using async/await to avoid implicit any
-  const { data: stories } = useQuery({
-    queryKey: ['stories'],
-    queryFn: async () => {
-      const response = await api.get('/stories/');
-      return response.data;
-    },
-  });
 
   // Infinite feed query (React Query v5 syntax)
   const {
@@ -100,7 +91,7 @@ export default function FeedPage() {
         {/* Main Feed Column */}
         <div className="lg:col-span-2 space-y-6">
           {/* Stories */}
-          <StoryRow stories={stories} />
+          <StoryRow />
 
           {/* Feed Posts */}
           <AnimatePresence>
