@@ -1,51 +1,60 @@
-// src/app/(main)/feed/page.tsx (Enhanced with infinite scroll, stories, and create post)
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Plus } from 'lucide-react';
 import api from '@/lib/api/client';
+import { useAuthStore } from '@/store/authStore';
 import { PostCard } from '@/components/feed/PostCard';
 import { StoryRow } from '@/components/feed/StoryRow';
 import { CreatePostButton } from '@/components/feed/CreatePostButton';
 import { PostSkeleton } from '@/components/feed/PostSkeleton';
-import { EmptyState } from '@/components/ui/EmptyState';
 import { TrendingHashtags } from '@/components/feed/TrendingHashtags';
 import { Suggestions } from '@/components/feed/Suggestions';
-import { useAuthStore } from '@/store/authStore';
-import { Plus } from 'lucide-react';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function FeedPage() {
   const { user } = useAuthStore();
   const { ref, inView } = useInView();
   const [showCreatePost, setShowCreatePost] = useState(false);
-  
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, refetch } = useInfiniteQuery(
-  ['feed'],
-  async ({ pageParam = 1 }) => {
-    const response = await api.get(`/posts/feed/?page=${pageParam}`);
-    return response.data;
-  },
-  {
-    getNextPageParam: (lastPage) => lastPage.next || undefined,
-    staleTime: 30000,
-    cacheTime: 300000,
-  }
-);
-  
+
   // Fetch stories
-  const { data: stories } = useQuery(['stories'], () => 
-    api.get('/stories/').then((res) => res.data)
-  );
-  
+  const { data: stories } = useQuery({
+    queryKey: ['stories'],
+    queryFn: () => api.get('/stories/').then((res) => res.data),
+  });
+
+  // Infinite feed query (React Query v5 syntax)
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ['feed'],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await api.get(`/posts/feed/?page=${pageParam}`);
+      return response.data;
+    },
+    getNextPageParam: (lastPage) => lastPage.next || undefined,
+    initialPageParam: 1,
+    staleTime: 30000,
+    gcTime: 300000, // formerly cacheTime
+  });
+
+  // Load more when scrolling into view
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, [inView, hasNextPage, isFetchingNextPage]);
-  
-  if (status === 'loading') {
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  // Loading state
+  if (status === 'pending') {
     return (
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -64,7 +73,8 @@ export default function FeedPage() {
       </div>
     );
   }
-  
+
+  // Error state
   if (status === 'error') {
     return (
       <EmptyState
@@ -72,15 +82,15 @@ export default function FeedPage() {
         title="Unable to load feed"
         description="There was an error loading your feed. Please try again."
         action={{
-          label: "Retry",
+          label: 'Retry',
           onClick: () => refetch(),
         }}
       />
     );
   }
-  
-  const posts = data?.pages.flatMap((page) => page.results) || [];
-  
+
+  const posts = data?.pages.flatMap((page) => page.results) ?? [];
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -88,7 +98,7 @@ export default function FeedPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Stories */}
           <StoryRow stories={stories} />
-          
+
           {/* Feed Posts */}
           <AnimatePresence>
             {posts.length === 0 ? (
@@ -97,7 +107,7 @@ export default function FeedPage() {
                 title="No posts yet"
                 description="Follow users or create your first post to see content here."
                 action={{
-                  label: "Create Post",
+                  label: 'Create Post',
                   onClick: () => setShowCreatePost(true),
                 }}
               />
@@ -114,7 +124,8 @@ export default function FeedPage() {
               ))
             )}
           </AnimatePresence>
-          
+
+          {/* Load more skeleton */}
           {isFetchingNextPage && (
             <div className="space-y-6">
               {[...Array(2)].map((_, i) => (
@@ -122,14 +133,15 @@ export default function FeedPage() {
               ))}
             </div>
           )}
-          
+
+          {/* Intersection observer target */}
           <div ref={ref} className="h-10" />
         </div>
-        
+
         {/* Sidebar */}
         <div className="hidden lg:block">
           <div className="sticky top-20 space-y-6">
-            {/* User Info */}
+            {/* User Info Card */}
             <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
               <div className="flex items-center space-x-3">
                 <img
@@ -144,16 +156,16 @@ export default function FeedPage() {
                 <button className="text-primary text-sm font-semibold">Switch</button>
               </div>
             </div>
-            
+
             {/* Trending Hashtags */}
             <TrendingHashtags />
-            
+
             {/* Suggestions */}
             <Suggestions />
           </div>
         </div>
       </div>
-      
+
       {/* Create Post Modal */}
       <AnimatePresence>
         {showCreatePost && (
@@ -167,7 +179,7 @@ export default function FeedPage() {
           />
         )}
       </AnimatePresence>
-      
+
       {/* Floating Action Button for Mobile */}
       <button
         onClick={() => setShowCreatePost(true)}
