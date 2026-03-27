@@ -22,14 +22,17 @@ export default function FeedPage() {
   const [showCreatePost, setShowCreatePost] = useState(false);
   
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, refetch } = useInfiniteQuery(
-    ['feed'],
-    ({ pageParam = 1 }) => api.get(`/posts/feed/?page=${pageParam}`).then((res) => res.data),
-    {
-      getNextPageParam: (lastPage) => lastPage.next || undefined,
-      staleTime: 30000,
-      cacheTime: 300000,
-    }
-  );
+  ['feed'],
+  async ({ pageParam = 1 }) => {
+    const response = await api.get(`/posts/feed/?page=${pageParam}`);
+    return response.data;
+  },
+  {
+    getNextPageParam: (lastPage) => lastPage.next || undefined,
+    staleTime: 30000,
+    cacheTime: 300000,
+  }
+);
   
   // Fetch stories
   const { data: stories } = useQuery(['stories'], () => 
