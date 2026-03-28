@@ -9,7 +9,6 @@ import { toast } from 'sonner';
 import { X, Calendar } from 'lucide-react';
 import api from '@/lib/api/client';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
-//import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -42,6 +41,16 @@ interface CreatePostButtonProps {
   onClose: () => void;
   onSuccess?: () => void;
 }
+
+// Helper for button styling (matching shadcn)
+const btnClasses = (variant?: string, extra?: string) => {
+  const base = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
+  const variants: Record<string, string> = {
+    outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+    default: "bg-primary text-primary-foreground hover:bg-primary/90",
+  };
+  return `${base} ${variants[variant || 'default']} ${extra || ''}`;
+};
 
 export function CreatePostButton({ isOpen, onClose, onSuccess }: CreatePostButtonProps) {
   const [scheduleEnabled, setScheduleEnabled] = useState(false);
@@ -169,20 +178,15 @@ export function CreatePostButton({ isOpen, onClose, onSuccess }: CreatePostButto
           )}
 
           <DialogFooter>
-  <button
-    type="button"
-    onClick={onClose}
-    className="px-4 py-2 border rounded-md hover:bg-gray-100"
-  >
-    Cancel
-  </button>
-  <button
-    type="submit"
-    disabled={createPostMutation.isPending}
-    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-  >
-    {createPostMutation.isPending ? 'Publishing...' : 'Publish'}
-  </button>
-</DialogFooter>
+            <button type="button" onClick={onClose} className={btnClasses('outline')}>
+              Cancel
+            </button>
+            <button type="submit" disabled={createPostMutation.isPending} className={btnClasses('default')}>
+              {createPostMutation.isPending ? 'Publishing...' : 'Publish'}
+            </button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
