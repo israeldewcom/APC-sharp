@@ -50,7 +50,7 @@ export function PostCard({ post, onDelete, onEdit }: PostCardProps) {
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['feed'] });
       setLiked(!liked);
-      setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
+      setLikesCount((prev: number) => (liked ? prev - 1 : prev + 1));
     },
     onError: () => {
       setLiked(liked);
@@ -361,7 +361,7 @@ export function PostCard({ post, onDelete, onEdit }: PostCardProps) {
   );
 }
 
-// CommentsList component (unchanged except import for useQuery)
+// CommentsList component
 function CommentsList({ postId }: { postId: string }) {
   const { data: comments, isLoading } = useQuery({
     queryKey: ['comments', postId],
