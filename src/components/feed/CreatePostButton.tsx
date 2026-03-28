@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { X, Calendar } from 'lucide-react';
 import api from '@/lib/api/client';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
-import { Button } from '@/components/ui/button';
+//import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -169,13 +169,20 @@ export function CreatePostButton({ isOpen, onClose, onSuccess }: CreatePostButto
           )}
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-            <Button type="submit" disabled={createPostMutation.isPending}>
-              {createPostMutation.isPending ? 'Publishing...' : 'Publish'}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+  <button
+    type="button"
+    onClick={onClose}
+    className="px-4 py-2 border rounded-md hover:bg-gray-100"
+  >
+    Cancel
+  </button>
+  <button
+    type="submit"
+    disabled={createPostMutation.isPending}
+    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+  >
+    {createPostMutation.isPending ? 'Publishing...' : 'Publish'}
+  </button>
+</DialogFooter>
   );
 }
