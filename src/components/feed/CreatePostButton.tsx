@@ -1,17 +1,15 @@
-// src/components/feed/CreatePostButton.tsx
 'use client';
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { motion } from 'framer-motion';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { X, Image, Video, Calendar } from 'lucide-react';
+import { X, Calendar } from 'lucide-react';
 import api from '@/lib/api/client';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
-//import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -50,7 +48,7 @@ export function CreatePostButton({ isOpen, onClose, onSuccess }: CreatePostButto
   const { files, getRootProps, getInputProps, isDragActive, uploadFiles, removeFile, clearFiles } = useMediaUpload();
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<PostForm>({
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<PostForm>({
     resolver: zodResolver(postSchema),
     defaultValues: {
       content: '',
@@ -118,11 +116,7 @@ export function CreatePostButton({ isOpen, onClose, onSuccess }: CreatePostButto
             }`}
           >
             <input {...getInputProps()} />
-            <div className="flex justify-center space-x-4">
-              <Image className="w-6 h-6 text-gray-500" />
-              <Video className="w-6 h-6 text-gray-500" />
-            </div>
-            <p className="text-sm text-gray-500 mt-2">Add Photos/Videos</p>
+            <p className="text-sm text-gray-500">Add Photos/Videos (drag & drop or click)</p>
           </div>
 
           {/* Media Previews */}
@@ -175,10 +169,10 @@ export function CreatePostButton({ isOpen, onClose, onSuccess }: CreatePostButto
           )}
 
           <DialogFooter>
-            <button type="button" onClick={onClose} className="px-4 py-2 border rounded-md hover:bg-gray-100">Cancel</button>
-<button type="submit" disabled={createPostMutation.isPending} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-  {createPostMutation.isPending ? 'Publishing...' : 'Publish'}
-</button>
+            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="submit" disabled={createPostMutation.isPending}>
+              {createPostMutation.isPending ? 'Publishing...' : 'Publish'}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
