@@ -2,7 +2,6 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import api from '@/lib/api/client';
@@ -12,7 +11,10 @@ import { Button } from '@/components/ui/button';
 export function StoryRow() {
   const { data: stories, isLoading } = useQuery({
     queryKey: ['stories'],
-    queryFn: () => api.get('/stories/').then((res) => res.data),
+    queryFn: async () => {
+      const response = await api.get('/stories/');
+      return response.data;
+    },
   });
 
   if (isLoading) {
