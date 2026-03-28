@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import api from '@/lib/api/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 
 export function StoryRow() {
   const { data: stories, isLoading } = useQuery({
@@ -34,18 +33,20 @@ export function StoryRow() {
     { id: '3', name: 'Fatima', avatar: null },
   ];
 
+  // Helper for button styling (matching shadcn outline)
+  const btnOutlineClasses = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2";
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
       <div className="flex space-x-4 overflow-x-auto scrollbar-hide">
         {/* Add Story Button */}
         <div className="flex-shrink-0 text-center">
-          <Button
-            variant="outline"
-            className="relative w-16 h-16 rounded-full p-0 border-2 border-primary"
+          <button
+            className={`${btnOutlineClasses} relative w-16 h-16 rounded-full p-0 border-2 border-primary`}
             onClick={() => {/* open story creator */}}
           >
             <Plus className="w-6 h-6" />
-          </Button>
+          </button>
           <p className="text-xs mt-1">Add Story</p>
         </div>
 
